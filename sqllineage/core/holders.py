@@ -461,14 +461,11 @@ class SQLLineageHolder(ColumnLineageMixin):
             if isinstance(node, Column) and len(node.parent_candidates) > 1:
                 g.remove_node(node)
         nodes_list = {}
-        tmp_nodes_list = {}
-        print("================\n")
-        for id, label in enumerate(g.nodes(data=True)):
-            print("id, label-> ", id, ":", label)
+        tmp_node_list = {}
         for node, attr in g.nodes(data=True):
             nodes_list[str(node)] = node
             if 'tmp' in str(node) or 'temp' in str(node):
-                tmp_nodes_list[str(node)] = node
+                tmp_node_list[str(node)] = node
         e2e_dict = {}
         tmp_out_degree = {}
         tmp_in_degree = {}
@@ -497,17 +494,14 @@ class SQLLineageHolder(ColumnLineageMixin):
                 else:
                     tmp_in_degree[u] = []
                     tmp_in_degree[u].append((u, v, data))
-
         for key, values in tmp_in_degree.items():
             for u, v, data in values:
                 start_cols = u
                 src_cols = v
-
                 for key1, values1 in tmp_out_degree.items():
                     for u1, v1, data1 in values1:
                         target_cols = u1
                         end_cols = v1
-
                         if ("tmp" in str(u) or "temp" in str(u)) and \
                                 ("tmp" in str(v) or "temp" in str(v)) and \
                                 ("tmp" in str(u1) or "temp" in str(u1)) and \
